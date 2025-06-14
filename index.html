@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Amplify: Activist's Toolkit</title>
+    <style>
+        :root {
+            --primary-color: #4a148c; /* Deep Purple */
+            --secondary-color: #7e57c2; /* Lighter Purple */
+            --accent-color: #fdd835; /* Yellow */
+            --light-gray: #f5f5f5;
+            --dark-gray: #333;
+            --white: #ffffff;
+            --text-color: #212121;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.7;
+            background-color: var(--light-gray);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        header h1 {
+            font-size: 3em;
+            color: var(--primary-color);
+            margin: 0;
+            font-weight: 700;
+        }
+
+        header p {
+            font-size: 1.2em;
+            color: var(--secondary-color);
+            max-width: 600px;
+            margin: 10px auto;
+        }
+
+        .toolkit {
+            background-color: var(--white);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .step {
+            margin-bottom: 30px;
+        }
+        
+        .step-label {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: var(--white);
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+        }
+
+        select {
+            width: 100%;
+            padding: 12px;
+            font-size: 1.1em;
+            border-radius: 8px;
+            border: 2px solid #ddd;
+            background-color: var(--white);
+            cursor: pointer;
+        }
+        select:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+        }
+
+        #issue-briefing {
+            background-color: #f9f8fc;
+            border-left: 5px solid var(--secondary-color);
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: none; /* Hidden by default */
+        }
+        
+        #issue-briefing h3 {
+            margin-top: 0;
+            color: var(--primary-color);
+        }
+        
+        #issue-briefing ul {
+            list-style-type: '✓ ';
+            padding-left: 20px;
+        }
+
+        #action-toolkit {
+            display: none; /* Hidden by default */
+        }
+
+        textarea {
+            width: 100%;
+            height: 300px;
+            padding: 15px;
+            font-family: inherit;
+            font-size: 1em;
+            border-radius: 8px;
+            border: 2px solid #ddd;
+            resize: vertical;
+            box-sizing: border-box;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .action-button {
+            flex-grow: 1;
+            padding: 15px;
+            font-size: 1.1em;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s ease;
+        }
+        .action-button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        
+        #generate-letter-btn {
+            background-color: var(--accent-color);
+            color: var(--dark-gray);
+        }
+        
+        #copy-letter-btn {
+            background-color: var(--primary-color);
+            color: var(--white);
+        }
+        
+        #copy-letter-btn.copied {
+            background-color: #2ecc71;
+        }
+
+        #resource-hub {
+            margin-top: 40px;
+            text-align: center;
+        }
+        
+        #resource-hub a {
+            color: var(--secondary-color);
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            margin: 5px 10px;
+        }
+         #resource-hub a:hover {
+            text-decoration: underline;
+         }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Project Amplify</h1>
+            <p>Your AI-Powered Activist's Toolkit for Human Equality.</p>
+        </header>
+
+        <div class="toolkit">
+            <!-- Step 1: Choose an Issue -->
+            <div class="step">
+                <span class="step-label">Step 1</span>
+                <h2>Choose an Issue to Champion</h2>
+                <select id="issue-selector">
+                    <option value="" selected disabled>Select a principle...</option>
+                    <option value="healthcare">Healthcare as a Human Right</option>
+                    <option value="gender">Gender Equality</option>
+                    <option value="lgbtq">Marriage Equality & LGBTQ+ Rights</option>
+                </select>
+            </div>
+
+            <!-- Issue Briefing (Dynamically populated) -->
+            <div id="issue-briefing">
+                <h3 id="briefing-title"></h3>
+                <p id="briefing-desc"></p>
+                <h4>Key Facts:</h4>
+                <ul id="briefing-facts"></ul>
+            </div>
+
+            <!-- Step 2: Generate & Customize Letter -->
+            <div id="action-toolkit" class="step">
+                <span class="step-label">Step 2</span>
+                <h2>Generate & Customize Your Letter</h2>
+                <p>Use the generated template below. Personalize it with your story to maximize its impact, then send it to your representative.</p>
+                <textarea id="letter-output" placeholder="Your generated letter will appear here..."></textarea>
+                <div class="button-group">
+                    <button id="generate-letter-btn" class="action-button" disabled>Generate Letter</button>
+                    <button id="copy-letter-btn" class="action-button" disabled>Copy to Clipboard</button>
+                </div>
+            </div>
+            
+        </div>
+
+        <!-- Resource Hub -->
+        <div id="resource-hub">
+            <span class="step-label">Step 3</span>
+            <h3>Take the Next Step</h3>
+            <p>Find your representative and make your voice heard.</p>
+            <a href="https://www.house.gov/representatives/find-your-representative" target="_blank" rel="noopener noreferrer">Find Your U.S. Representative</a>
+            <a href="https://www.senate.gov/senators/senators-contact.htm" target="_blank" rel="noopener noreferrer">Find Your U.S. Senators</a>
+        </div>
+    </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+    const issuesData = {
+        healthcare: {
+            title: "Healthcare as a Human Right",
+            description: "Ensuring every individual has access to quality, affordable healthcare is a cornerstone of a just society. Access should be based on need, not the ability to pay.",
+            facts: [
+                "In 2022, 27.6 million people of all ages were uninsured in the United States.",
+                "Medical debt is a leading cause of bankruptcy, impacting millions of families.",
+                "Significant disparities in health outcomes persist based on race, income, and geography."
+            ],
+            letter: `Dear [Representative's Name],
+
+I am writing to you today as a concerned constituent from [Your City/State] to urge you to champion legislation that treats healthcare as a fundamental human right.
+
+The fact that millions of Americans remain uninsured and that medical debt is a primary driver of financial ruin is a moral failing we must address. As you know, significant disparities in health outcomes persist across our communities, a problem we have the power to solve with bold policy.
+
+I ask that you support policies that expand coverage, control costs, and ensure that every person in our nation has access to the quality healthcare they need to live a healthy, productive life. This is not just an economic issue; it is a matter of human dignity.
+
+Thank you for your time and for your service to our community.
+
+Sincerely,
+[Your Name]
+[Your Address/Zip Code]`
+        },
+        gender: {
+            title: "Gender Equality",
+            description: "Gender equality means that all genders have equal rights, responsibilities, and opportunities. This includes eliminating wage gaps, fighting discrimination, and ensuring equal representation in leadership.",
+            facts: [
+                "In 2023, women earned an estimated 84 cents for every dollar earned by men.",
+                "Gender-based discrimination persists in hiring, promotion, and professional development across many industries.",
+                "Equal representation in government and corporate leadership is crucial for creating fairer policies for everyone."
+            ],
+            letter: `Dear [Representative's Name],
+
+I am writing from [Your City/State] to urge your steadfast support for policies that advance gender equality.
+
+It is unacceptable that in 2024, a significant pay gap between men and women still exists. As you know, women earn, on average, just 84 cents for every dollar earned by men, which translates to a staggering loss of income over a lifetime. This disparity, alongside ongoing discrimination in professional settings, holds back our entire economy and community.
+
+I ask you to co-sponsor and vote for legislation like the Paycheck Fairness Act and other measures that strengthen protections against gender-based discrimination. Ensuring equal opportunity is not just the right thing to do—it is essential for a prosperous and just society.
+
+Thank you for your attention to this critical issue.
+
+Sincerely,
+[Your Name]
+[Your Address/Zip Code]`
+        },
+        lgbtq: {
+            title: "Marriage Equality & LGBTQ+ Rights",
+            description: "While marriage equality is the law of the land, the fight for full, unequivocal rights for all LGBTQ+ individuals continues. This means codifying protections against discrimination in housing, employment, and public life.",
+            facts: [
+                "The Supreme Court affirmed marriage equality in Obergefell v. Hodges (2015).",
+                "Many states lack explicit non-discrimination protections for LGBTQ+ people, leaving them vulnerable.",
+                "The Equality Act would amend existing civil rights laws to explicitly include protections for sexual orientation and gender identity at the federal level."
+            ],
+            letter: `Dear [Representative's Name],
+
+I am writing to you from [Your City/State] as a constituent who believes deeply in equal rights for all Americans, including our LGBTQ+ community.
+
+While marriage equality was a landmark victory, it is crucial that we codify these and other rights into federal law to protect them from future challenges. Currently, many states lack explicit non-discrimination protections, leaving LGBTQ+ individuals vulnerable in areas like employment, housing, and healthcare.
+
+I strongly urge you to support and vote for the Equality Act. Passing this bill would provide the clear, consistent federal protections that every person deserves, regardless of who they are or whom they love. It is time to ensure that all Americans are treated with the dignity and respect they are owed under the law.
+
+Thank you for your leadership on this vital human rights issue.
+
+Sincerely,
+[Your Name]
+[Your Address/Zip Code]`
+        }
+    };
+
+    // DOM Elements
+    const selector = document.getElementById('issue-selector');
+    const briefingDiv = document.getElementById('issue-briefing');
+    const actionToolkitDiv = document.getElementById('action-toolkit');
+    const generateBtn = document.getElementById('generate-letter-btn');
+    const copyBtn = document.getElementById('copy-letter-btn');
+    const letterOutput = document.getElementById('letter-output');
+    
+    let currentIssue = null;
+
+    // Event Listener for the dropdown
+    selector.addEventListener('change', (e) => {
+        currentIssue = e.target.value;
+        if (!currentIssue) return;
+
+        const data = issuesData[currentIssue];
+
+        // Populate briefing
+        document.getElementById('briefing-title').textContent = data.title;
+        document.getElementById('briefing-desc').textContent = data.description;
+        const factsList = document.getElementById('briefing-facts');
+        factsList.innerHTML = ''; // Clear previous facts
+        data.facts.forEach(fact => {
+            const li = document.createElement('li');
+            li.textContent = fact;
+            factsList.appendChild(li);
+        });
+        
+        briefingDiv.style.display = 'block';
+        actionToolkitDiv.style.display = 'block';
+        generateBtn.disabled = false;
+        letterOutput.value = ''; // Clear old letter
+        copyBtn.disabled = true;
+        copyBtn.textContent = 'Copy to Clipboard';
+        copyBtn.classList.remove('copied');
+
+    });
+
+    // Event Listener for Generate Button
+    generateBtn.addEventListener('click', () => {
+        if (!currentIssue) return;
+        letterOutput.value = issuesData[currentIssue].letter;
+        copyBtn.disabled = false;
+    });
+
+    // Event Listener for Copy Button
+    copyBtn.addEventListener('click', () => {
+        letterOutput.select();
+        document.execCommand('copy'); // For broad browser compatibility
+
+        copyBtn.textContent = 'Copied!';
+        copyBtn.classList.add('copied');
+        
+        setTimeout(() => {
+            copyBtn.textContent = 'Copy to Clipboard';
+            copyBtn.classList.remove('copied');
+        }, 2000);
+    });
+
+});
+</script>
+
+</body>
+</html>
